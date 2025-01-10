@@ -8,11 +8,11 @@ from timeit import default_timer as timer
 app = FastAPI()
 
 @app.get("/")
-async def root() -> None:
+async def root():
     return {"message": "Hello"}
 
 @app.post("/initialize")
-async def initialize() -> None:
+async def initialize():
     start = timer()
     initAndSort()
     end = timer()

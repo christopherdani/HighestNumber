@@ -11,8 +11,9 @@ import os
 
 from dotenv import load_dotenv
 
-file_path = os.path.join('Data', 'data.csv') 
 
+
+file_path = os.path.join('Data', 'data.csv') 
 load_dotenv()
 uri = os.getenv('MONGODB_URI')
 
