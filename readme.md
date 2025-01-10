@@ -18,10 +18,17 @@
 
     `MONGODB_URI=<INSERT_MONGO_URI_HERE>`
 
-5. Run the server    
+5. Create the dataset
+
+    `python generateData.py`
+
+6. Run the server    
 
     `fastapi dev main.py`
 
+
+### Initialize for the DF approach:
+`localhost:8000/initialize`
 
 ## Example requests:
 
