@@ -61,6 +61,11 @@ What is this API being used for?
       1. The library abstracts chunking of the data.
    2. Normalize it (split string by `_`) and create 2 separated columns of `numerical_id` and `numerical_value`
    3. Sort it `O(n log n)`
+      1. I chose merge sort as it's stable
+         1. There are no requirements for keeping the stability of the data. I'm just picking this as a safe bet
+      2. To optimize space, we can pick something like a heap sort
+      3. The space complexity of this is `O(n)`
+         1. Merge sort requires extra space to hold the subarrays, and all the subarrays totalled will be of length `n`
    4. Query-ing is `O(X)`
       1. Where `X` is the number of top values requested
    5. Pros:
@@ -89,6 +94,10 @@ What is this API being used for?
    4. Now this depends on the specific database implementation
       1. MongoDB uses a B Tree to implement indices
    5. Creating and indexing database for very large data can be very expensive.
+   6. Why not local? 
+      1. Scaling is abstracted if we use the cloud version of MongoDB
+      2. Local approach may be faster, because there is no network speed or ops/sec factor
+         1. But as we scale, we might have to worry about horizontal/vertical scaling
 
 ## Actual performance
 ### In memory approach using pandas
@@ -102,7 +111,7 @@ This approach is faster when the dataset is smaller because there is no network 
    1. This database tier allows for a maximum of 500 ops/sec
    2. MongoDB adds a unique id to every row and it indexes it. So this will add to the cost of this operation.
 2. It took 102.33526829996845 seconds to create an index for `numerical_value`
-3. `O(Log N)` on average
+3. Query is `O(Log N)` on average
    1. This grows to `O(N)` when `X == N` as an edge case
 4. This approach is more efficient and scalable when datasets become extremely large.
 
@@ -112,6 +121,12 @@ This approach is faster when the dataset is smaller because there is no network 
   - This MIGHT be useful, as it can sort in parallel. But would have to investigate
 - Multithreading in the in memory approach.
   - Sorting with multithreading is a difficult problem. But if used, it can optimize it
+  - I tried this approach with Dask library
+    - The sorted results were "chunked" as in a group would be sorted starting at a certain number, and then the next chunk is also sorted, but they're not "connected"
+    - I'd look into this a bit more to optimize the in memory approach
 - For the API design itself
   - Use a singleton class that maintains a single pool of connection
   - Then I would use a getter function to get a connection, instead of re-establishing one each time the endpoint is called
+  - Have POST endpoints to insert data (singular or bulk) and get the performance for those.
+- Set up Docker
+  - I ran into trouble with SSD space and the installation of Docker
